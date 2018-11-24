@@ -12,7 +12,7 @@
         android:layout_height="564dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.791" />
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
-        android:id="@+id/moveRobotSeekbarID"
+        android:id="@+id/moveXRobotSeekbarID"
         android:layout_width="161dp"
         android:layout_height="22dp"
         app:layout_constraintBottom_toTopOf="@+id/ftcFieldMapViewID"
@@ -48,5 +48,38 @@
         app:layout_constraintStart_toEndOf="@+id/ftcFieldMapViewID"
         app:layout_constraintTop_toBottomOf="@+id/ftcFieldMapViewID"
         app:layout_constraintVertical_bias="0.843" />
+
+    <TextView
+        android:id="@+id/showIfRobotIsTouchingMineralTextViewID"
+        android:layout_width="200dp"
+        android:layout_height="58dp"
+        app:layout_constraintBottom_toTopOf="@+id/ftcFieldMapViewID"
+        app:layout_constraintEnd_toStartOf="@+id/ftcFieldMapViewID"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/programmerName"
+        app:layout_constraintTop_toBottomOf="@+id/showRRFieldToggleButtonID"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <SeekBar
+        android:id="@+id/moveRobotYSeekBarID"
+        android:layout_width="156dp"
+        android:layout_height="23dp"
+        app:layout_constraintBottom_toTopOf="@+id/moveXRobotSeekbarID"
+        app:layout_constraintEnd_toStartOf="@+id/ftcFieldMapViewID"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toEndOf="@+id/ftcFieldMapViewID"
+        app:layout_constraintTop_toBottomOf="@+id/rotateRobotSeekBarID"
+        app:layout_constraintVertical_bias="0.945" />
+
+    <SeekBar
+        android:id="@+id/rotateRobotSeekBarID"
+        android:layout_width="158dp"
+        android:layout_height="21dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ftcFieldMapViewID"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toEndOf="@+id/ftcFieldMapViewID"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.853" />
 
 </android.support.constraint.ConstraintLayout>

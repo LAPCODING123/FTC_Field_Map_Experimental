@@ -16,6 +16,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class FTCFieldMapView extends View {
+    private Canvas activeCanvas;
+
     private static final int SCALE = 4;
     private int robotxPos = 0 ;
     private int robotyPos = 0 ;
@@ -66,6 +68,7 @@ public class FTCFieldMapView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        activeCanvas = canvas;
         setScaleY((float) ((1.0/SCALE)*2.0)); //Shrink it to actual size that will fit.
         setScaleX((float) ((1.0/SCALE)*2.0));
 
@@ -94,7 +97,7 @@ public class FTCFieldMapView extends View {
 
 
         //draw the lander.
-        canvas.rotate(45, canvas.getWidth()/2, canvas.getHeight()/2);
+        canvas.rotate(0, canvas.getWidth()/2, canvas.getHeight()/2);
         landerAreaDrawable.setBounds(384, 384, canvas.getWidth()-384, canvas.getHeight()-384); //44.8 is about 45 and (564-364 = 200).45*4 = 180 Rather have a little more to compensate for tape area.
         landerAreaDrawable.getPaint().setColor(Color.GRAY);
         landerAreaDrawable.draw(canvas);
@@ -107,19 +110,32 @@ public class FTCFieldMapView extends View {
         robotDrawable = new ShapeDrawable(robot);
         robotDrawable.setBounds(robotxPos-(int)(0.5*robotLengthInches), robotyPos-(int)(0.5*robotWidthInches), robotxPos+(int)(0.5*robotLengthInches), robotyPos+(int)(0.5*robotWidthInches));
         robotDrawable.getPaint().setColor(Color.BLUE);
-        canvas.rotate(robotBearingInDegrees);
+        canvas.rotate(robotBearingInDegrees, robotDrawable.getBounds().centerX(), robotDrawable.getBounds().centerY());
         robotDrawable.draw(canvas);
         canvas.restore();
         canvas.save();
 
 
     }
+    public void updateRobotCoordinate(double robotPos, boolean putTrueForXPutFalseforY){
+        //TODO check for weird casting bugs here.
+        if (putTrueForXPutFalseforY)
+            this.robotxPos = (int)(robotPos*SCALE);
+        else
+            this.robotyPos = (int)(robotPos*SCALE);
+        invalidate();
+    }
+
+    public void updateRobotBearing(int robotBearingInDegrees){
+        this.robotBearingInDegrees = robotBearingInDegrees;
+        invalidate();
+    }
 
     public void updateRobotCoordinates(double robotxPos, double robotyPos, int robotBearingInDegrees){
-        this.robotxPos = (int)(robotxPos*SCALE); //TODO check for weird casting bugs here.
-        this.robotyPos = (int)(robotyPos*SCALE);
-        this.robotBearingInDegrees = (robotBearingInDegrees);
-        invalidate(); //now redraw robot location.
+        updateRobotCoordinate(robotxPos, true);
+        updateRobotCoordinate(robotyPos, false);
+        updateRobotBearing(robotBearingInDegrees);
+        //invalidate();
     }
 
     public void inputRobotDimensions(double robotLengthInches, double robotWidthInches){
@@ -134,5 +150,60 @@ public class FTCFieldMapView extends View {
     public int getRobotYCoordinates(){
         return robotDrawable.getBounds().centerY();
     }
+
+    public int nativeCoordinateToFTCCoordinateValue(int nativeCoordinate, Canvas canvas, final int SCALE){
+
+        return (int)((nativeCoordinate-(0.5*canvas.getHeight()))*(1/SCALE));
+    }
+
+    public int FTCCoordinateToNativeCoordinateValue(int ftcCoordinate, Canvas canvas, final int SCALE){
+        /**
+         *
+         */
+
+        return ((int)(0.5*canvas.getHeight())+ftcCoordinate)*SCALE; //origin X or Y plus the difference.
+
+    }
+
+    public boolean robotTouchingLander(){
+        boolean robotTouchesSomething;
+       // activeCanvas.rotate(robotBearingInDegrees, robotDrawable.getBounds().centerX(), robotDrawable.getBounds().centerY());
+        //activeCanvas.save();
+
+
+        if (Rect.intersects(robotDrawable.getBounds(), landerAreaDrawable.getBounds())){   //intersects() detects slightests touch. contains() needs whole rectangle inside.
+            robotTouchesSomething = true;
+        }
+        else {
+            robotTouchesSomething = false;
+        }
+        //activeCanvas.restore();
+        //activeCanvas.save();
+        return robotTouchesSomething;
+    }
+
+    public String robotTouchingLanderString(){
+        if(robotTouchingLander())
+            return "Touching Lander";
+        else
+            return "Not touching Lander";
+
+    }
+
+    public static boolean RectCollide(double angle, Rect rectangleA, Rect rectamgleB){
+        // http://answers.google.com/answers/threadview/id/531318.html
+        double xAmin, xAmax, yAmin, yAmax, xBmin, xBmax, yBmin, yBmax;
+        if (angle == 0.0){
+            xAmin = rectangleA.left;
+            xAmax = rectangleA.right;
+            yAmin = rectangleA.top;
+            yAmax = rectangleA.bottom;
+            //return (xAmin > xBmax || )
+        }
+        return false; //TODO delete this for now.
+
+    }
+
+
 
 }
